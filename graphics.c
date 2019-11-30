@@ -1,5 +1,10 @@
-#include <allegro.h>
 #include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#include <allegro.h>
+
 // XWIN and YWIN must be the same
 #define XWIN 600
 #define YWIN 600
@@ -125,7 +130,7 @@ void drawLines(){
 }
 
 // passing the color to east semaphore
-void EastSemaphore(color){
+void EastSemaphore(int color){
     rectfill(screen, 400, 205, 410, 220, color);
     rectfill(screen, 400, 230, 410, 245, color);
     rectfill(screen, 400, 255, 410, 270, color);
@@ -133,7 +138,7 @@ void EastSemaphore(color){
 }
 
 // passing the color to north semaphore
-void NorthSemaphore(color){
+void NorthSemaphore(int color){
     rectfill(screen, 205, 190, 220, 200, color);
     rectfill(screen, 230, 190, 245, 200, color);
     rectfill(screen, 255, 190, 270, 200, color);
@@ -141,7 +146,7 @@ void NorthSemaphore(color){
 }
 
 // passing the color to west semaphore
-void WestSemaphore(color){
+void WestSemaphore(int color){
     rectfill(screen, 190, 305, 200, 320, color);
     rectfill(screen, 190, 330, 200, 345, color);
     rectfill(screen, 190, 355, 200, 370, color);
@@ -149,7 +154,7 @@ void WestSemaphore(color){
 }
 
 // passing the color to south semaphore
-void SouthSemaphore(color){
+void SouthSemaphore(int color){
     rectfill(screen, 305, 400, 320, 410, color);
     rectfill(screen, 330, 400, 345, 410, color);
     rectfill(screen, 355, 400, 370, 410, color);
