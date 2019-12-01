@@ -11,7 +11,8 @@
 
 struct privata {
     sem_t macchina;
-    int xposition, yposition, blocked, startingposition;
+    int xposition, yposition, blocked;
+    char startingposition;
 } ;
 
 struct cars_t {

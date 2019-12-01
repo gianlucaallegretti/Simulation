@@ -5,50 +5,112 @@ void initCars (struct cars_t *c) {
     sem_init (&c->mutex, 0, 1);
 
     for (int i = 0; i < N; i++){
+        // Initializing all the different position that a car can have
         int ypos[8] = {210, 235, 260, 285, 310, 335, 360, 385};
+        int xpos[8] = {210, 235, 260, 285, 310, 335, 360, 385};
         int index = rand() % 8;
 
+        // All semaphores initialized to 0
         sem_init (&c->vehicle[i].macchina, 0, 0);
         c->vehicle[i].blocked = 0;
+
+        
+        // For west and east initialization of the cars
+        // WEST
         if (ypos[index] == 210 || ypos[index] == 235 || ypos[index] == 260 || ypos[index] == 285){
-            c->vehicle[i].startingposition = 590;
+            c->vehicle[i].startingposition = 'W';
             c->vehicle[i].xposition = 590;
             c->vehicle[i].yposition = ypos[index];
         }
-        if (ypos[index] == 310 || ypos[index] == 335 || ypos[index] == 360 || ypos[index] == 385){
-            c->vehicle[i].startingposition = 10;
+        // EAST
+        else if (ypos[index] == 310 || ypos[index] == 335 || ypos[index] == 360 || ypos[index] == 385){
+            c->vehicle[i].startingposition = 'E';
             c->vehicle[i].xposition = 10;
             c->vehicle[i].yposition = ypos[index];
         }
+
         
+
+        
+        // For north and south initialization of the cars
+        // NORTH
+        else if (xpos[index] == 210 || xpos[index] == 235 || xpos[index] == 260 || xpos[index] == 285){
+            c->vehicle[i].startingposition = 'N';
+            c->vehicle[i].xposition = xpos[index];
+            c->vehicle[i].yposition = 10;
+        }
+        // SOUTH
+        else if (xpos[index] == 310 || xpos[index] == 335 || xpos[index] == 360 || xpos[index] == 385){
+            c->vehicle[i].startingposition = 'S';
+            c->vehicle[i].xposition = xpos[index];
+            c->vehicle[i].yposition = 500;
+        }
+
+        
+        // Drawing the car like a circlefill
         circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
     }
+    // No cars blocked
     c->cars_blocked = 0;
 }
 
 // NEVER BLOCKING
 void carMove(struct cars_t *c, int num_car){
 
+    // Deleting the all position of the car
     circlefill(screen, c->vehicle[num_car].xposition, c->vehicle[num_car].yposition, 5, 8);
-    if (c->vehicle[num_car].startingposition == 590){
+
+    
+    // Setting the new position of the car
+    // WEST
+    if (c->vehicle[num_car].startingposition == 'W'){
         c->vehicle[num_car].xposition -= 10;
     }
-    else if (c->vehicle[num_car].startingposition == 10){
+    // EAST
+    else if (c->vehicle[num_car].startingposition == 'E'){
         c->vehicle[num_car].xposition += 10;
     }
+    // NORTH
+    else if (c->vehicle[num_car].startingposition == 'N'){
+        c->vehicle[num_car].yposition += 10;
+    }
+    // SOUTH
+    else if (c->vehicle[num_car].startingposition == 'S'){
+        c->vehicle[num_car].yposition -= 10;
+    }
+    // drawing
     circlefill(screen, c->vehicle[num_car].xposition, c->vehicle[num_car].yposition, 5, 14);
 }
 
-// POTENTIALLY BLOCKING
+// POTENTIALLY BLOCKING (if semaphore color == red -> block)
 void checkSemaphore (struct cars_t *c, int num_car){
 
-    if ((c->vehicle[num_car].xposition <= 420) && (c->vehicle[num_car].xposition > 410) && c->vehicle[num_car].startingposition == 590) {
+    // Coming from WEST
+    if ((c->vehicle[num_car].xposition <= 420) && (c->vehicle[num_car].xposition > 410) && c->vehicle[num_car].startingposition == 'W') {
         c->cars_blocked++;
         c->vehicle[num_car].blocked = 1;
         sem_wait(&c->vehicle[num_car].macchina);
     }
 
-    if ((c->vehicle[num_car].xposition > 180) && (c->vehicle[num_car].xposition <= 190) && c->vehicle[num_car].startingposition == 10) {
+    
+    // Coming from EAST
+    if ((c->vehicle[num_car].xposition >= 180) && (c->vehicle[num_car].xposition < 190) && c->vehicle[num_car].startingposition == 'E') {
+        c->cars_blocked++;
+        c->vehicle[num_car].blocked = 1;
+        sem_wait(&c->vehicle[num_car].macchina);
+    }
+
+    
+    // Coming from NORTH
+    if ((c->vehicle[num_car].yposition > 180) && (c->vehicle[num_car].yposition <= 190) && c->vehicle[num_car].startingposition == 'N') {
+        c->cars_blocked++;
+        c->vehicle[num_car].blocked = 1;
+        sem_wait(&c->vehicle[num_car].macchina);
+    }
+
+    
+    // Coming from SOUTH
+    if ((c->vehicle[num_car].yposition <= 420) && (c->vehicle[num_car].yposition > 410) && c->vehicle[num_car].startingposition == 'S') {
         c->cars_blocked++;
         c->vehicle[num_car].blocked = 1;
         sem_wait(&c->vehicle[num_car].macchina);
@@ -124,6 +186,7 @@ int main(){
 
     pthread_t macchinina, semaforino;
     pthread_attr_t attr;
+
     
     int id = 0;
     srand(time(NULL));
@@ -139,6 +202,7 @@ int main(){
 
     // 1 thread semaforo
     pthread_create (&semaforino, &attr, semaforo, NULL);
+
     
     install_keyboard();
     int k = 0;
