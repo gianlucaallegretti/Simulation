@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 // To define the number of vehicles
-#define N 4
+#define N 11
 
 // To define the number of each color for semaphores
 #define green 10
@@ -18,16 +18,20 @@ struct privata {
 struct cars_t {
     sem_t mutex;
     struct privata vehicle[N];
-    int cars_blocked;
 } cars;
 
+// To init cars
 void initCars (struct cars_t *c);
 
+// To move car
 void carMove (struct cars_t *c, int numero_macchina);
 
+// To check the color of the semaphore before passing
 void checkSemaphore (struct cars_t *c, int numero_macchine);
 
-void checkEnd (struct cars_t *c, int numero_macchina);
+// To check if there are some cars blocked on east-west
+void checkCarsBlockedEO(int color, struct cars_t *c);
 
-void checkCarsBlocked(int color, struct cars_t *c);
+// To check if there are some cars blocked on north-south
+void checkCarsBlockedNS(int color, struct cars_t *c);
 
