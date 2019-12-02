@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <semaphore.h>
-#include <stdlib.h>
-#include <allegro.h>
+#include "graphics.h"
 
 // XWIN and YWIN must be the same
 #define XWIN 600

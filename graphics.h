@@ -1,5 +1,10 @@
-#include <allegro.h>
 #include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#include <allegro.h>
+
 // XWIN and YWIN must be the same
 #define XWIN 600
 #define YWIN 600
@@ -8,13 +13,6 @@
 #define green 10
 #define red 12
 
-int color;
-
-void DrawGraphics();
-
-void DrawLines();
-
-void EastSemaphore(color);
-void NorthSemaphore(color);
-void WestSemaphore(color);
-void SouthSemaphore(color);
+// For the color of the semaphores
+void EOSemaphore(int color);
+void NSSemaphore(int color);
