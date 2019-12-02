@@ -1,2 +1,9 @@
-This is an example
+SIMULATION
+This is a simulation of a crossroad. Cars come from 4 different directions: North, South, West and East. There are 4 different semaphores, if the color is red cars will stop, if it's green they will pass.
+
+
+
+HOW TO START:
+gcc main.c -o main -lpthread `allegro-config --libs`
+./main
 
