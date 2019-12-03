@@ -11,11 +11,10 @@ void initCars (struct cars_t *c) {
         int secondLanes[4] = {310, 335, 360, 385};
         int index = rand() % 4;
 
-        
+       
         // Initializing N/4 cars for each direction
         if (i < N/4){
-
-            
+       
             c->vehicle[i].startingposition = 'N';
             c->vehicle[i].xposition = firstLanes[index]; // 210
             c->vehicle[i].yposition = 10;
@@ -36,7 +35,7 @@ void initCars (struct cars_t *c) {
 
             c->vehicle[i].startingposition = 'S';
             c->vehicle[i].xposition = secondLanes[index]; // 310
-            c->vehicle[i].yposition = 450;
+            c->vehicle[i].yposition = 590;
         }
 
         // All semaphores initialized to 0
@@ -44,7 +43,7 @@ void initCars (struct cars_t *c) {
         // No vehicles blocked at the beginning
         c->vehicle[i].blocked = 0;
 
-        
+       
         // Drawing the car like a circlefill
         circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
     }
@@ -53,11 +52,7 @@ void initCars (struct cars_t *c) {
 
 // NEVER BLOCKING
 void carMove(struct cars_t *c, int num_car){
-
-    // Deleting old position of the car
-    circlefill(screen, c->vehicle[num_car].xposition, c->vehicle[num_car].yposition, 5, 8);
-
-    
+   
     // Setting new position of the car
     // WEST
     if (c->vehicle[num_car].startingposition == 'W'){
@@ -76,15 +71,6 @@ void carMove(struct cars_t *c, int num_car){
         c->vehicle[num_car].yposition -= 10;
     }
 
-    
-    // Drawing car in new position
-    circlefill(screen, c->vehicle[num_car].xposition, c->vehicle[num_car].yposition, 5, 14);
-
-    // Re-drawing semaphores
-    if (c->vehicle[num_car].startingposition == 'E' || c->vehicle[num_car].startingposition == 'W')
-        EOSemaphore(c->vehicle[num_car].color);
-    else
-        NSSemaphore(c->vehicle[num_car].color);
 }
 
 
@@ -145,7 +131,7 @@ void checkCarsBlocked (int colorEO, int colorNS, struct cars_t *c){
         }
     }
 
-    
+   
     if (colorNS == green){
         for (int i = 0; i < N; i++){
             if (c->vehicle[i].blocked == 1 && (c->vehicle[i].startingposition == 'N' || c->vehicle[i].startingposition == 'S')) {
@@ -154,6 +140,7 @@ void checkCarsBlocked (int colorEO, int colorNS, struct cars_t *c){
         }
     }
 }
+
 
 
 
@@ -179,7 +166,7 @@ void *semaforo (void *arg){
     int color_EO[2] = {green, red};
     int color_NS[2] = {red, green};
 
-    
+   
     for (;;){
         if (i == 2){
             i = 0;
@@ -195,16 +182,27 @@ void *semaforo (void *arg){
     }
 }
 
+void * grafico (void * arg){
+
+    for (;;){
+        sleep(1);
+        drawGraphics();
+        drawLines();
+        drawCars(&cars);
+    }
+}
+
 
 int main(){
 
+    initGraphics();
     drawGraphics();
     drawLines();
 
-    pthread_t car_thread, semaphore_thread;
+    pthread_t car_thread, semaphore_thread, graphic_thread;
     pthread_attr_t attr;
 
-    
+   
     int id = 0;
     srand(time(NULL));
 
@@ -217,10 +215,12 @@ int main(){
         id++;
     }
 
-    // 1 thread semaforo
+    // 1 thread semaphore
     pthread_create (&semaphore_thread, &attr, semaforo, NULL);
 
-    
+    // 1 thread graphics
+    pthread_create (&graphic_thread, &attr, grafico, NULL);
+   
     install_keyboard();
     int k = 0;
     // The program will close when ESC is clicked
@@ -231,3 +231,4 @@ int main(){
 
     } while (k != KEY_ESC);
 }
+

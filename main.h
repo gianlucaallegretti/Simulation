@@ -3,7 +3,7 @@
 #include <pthread.h>
 
 // To define the number of vehicles
-#define N 4
+#define N 12
 
 // To define the number of each color for semaphores
 #define green 10

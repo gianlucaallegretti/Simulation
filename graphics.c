@@ -4,14 +4,32 @@
 #define XWIN 600
 #define YWIN 600
 
-// To draw graphics and init allegro
-void drawGraphics(){
+// To init allegro
+void initGraphics(){
     allegro_init();
     set_color_depth(8);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, XWIN, YWIN, 0, 0);
+}
+
+// To draw graphics
+void drawGraphics(){ 
     clear_to_color(screen, 2);
     rectfill(screen, XWIN/2 - 100, 0, (XWIN/2)+ 100, YWIN-1, 8);
     rectfill(screen, 0, (YWIN/2) - 100, XWIN-1, (YWIN/2) + 100, 8);
+}
+
+// To draw cars
+void drawCars(struct cars_t *c){
+    for (int i = 0; i < N; i++){
+    // Drawing car in new position
+    circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
+
+    // Re-drawing semaphores
+    if (c->vehicle[i].startingposition == 'E' || c->vehicle[i].startingposition == 'W')
+        EOSemaphore(c->vehicle[i].color);
+    else
+        NSSemaphore(c->vehicle[i].color);
+    }
 }
 
 // To draw road lines
