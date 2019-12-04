@@ -8,27 +8,29 @@
 // To define the number of each color for semaphores
 #define green 10
 #define red 12
+#define yellow 14
 
 struct privata {
     sem_t macchina;
-    int xposition, yposition, blocked, color;
+    int xposition, yposition, blocked;
     char startingposition;
 } ;
 
-struct cars_t {
+struct condivisa {
     sem_t mutex;
     struct privata vehicle[N];
-} cars;
+    int colorSemaphoreEO, colorSemaphoreNS;
+} cond;
 
 // To init cars
-void initCars (struct cars_t *c);
+void initStruct (struct condivisa *c);
 
 // To move car
-void carMove (struct cars_t *c, int numero_macchina);
+void carMove (struct condivisa *c, int num_car);
 
 // To check the color of the semaphore before passing
-void checkSemaphore (struct cars_t *c, int numero_macchine);
+void checkSemaphore (struct condivisa *c, int num_car);
 
 // To check if there are some cars blocked
-void checkCarsBlocked(int colorEO, int colorNS, struct cars_t *c);
+void checkCarsBlocked(int colorEO, int colorNS, struct condivisa *c);
 

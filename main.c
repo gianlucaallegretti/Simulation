@@ -1,7 +1,7 @@
 #include "main.h"
 #include "graphics.c"
 
-void initCars (struct cars_t *c) {
+void initStruct (struct condivisa *c) {
 
     sem_init (&c->mutex, 0, 1);
 
@@ -51,7 +51,7 @@ void initCars (struct cars_t *c) {
 
 
 // NEVER BLOCKING
-void carMove(struct cars_t *c, int num_car){
+void carMove(struct condivisa *c, int num_car){
    
     // Setting new position of the car
     // WEST
@@ -75,23 +75,18 @@ void carMove(struct cars_t *c, int num_car){
 
 
 // NEVER BLOCKING
-void changeColor (int colorEO, int colorNS, struct cars_t *c){
+void changeColor (int colorEO, int colorNS, struct condivisa *c){
 
-    for (int i = 0; i < N; i++){
-        if (c->vehicle[i].startingposition == 'E' || c->vehicle[i].startingposition == 'W')
-            c->vehicle[i].color = colorEO;
-
-        if (c->vehicle[i].startingposition == 'N' || c->vehicle[i].startingposition == 'S')
-            c->vehicle[i].color = colorNS;
-    }
+    c->colorSemaphoreEO = colorEO;
+    c->colorSemaphoreNS = colorNS;
 }
 
 
 // POTENTIALLY BLOCKING
-void checkSemaphore (struct cars_t *c, int num_car){
+void checkSemaphore (struct condivisa *c, int num_car){
 
     // It will block the car if it's red and near the semaphore
-    if (c->vehicle[num_car].color == red){
+    if (c->colorSemaphoreEO == red && (c->vehicle[num_car].startingposition == 'W' || c->vehicle[num_car].startingposition == 'E')){
         // WEST
         if ((c->vehicle[num_car].xposition <= 420) && (c->vehicle[num_car].xposition > 410) && c->vehicle[num_car].startingposition == 'W') {
             c->vehicle[num_car].blocked = 1;
@@ -103,7 +98,9 @@ void checkSemaphore (struct cars_t *c, int num_car){
             c->vehicle[num_car].blocked = 1;
             sem_wait(&c->vehicle[num_car].macchina);
         }
+    }
 
+    if (c->colorSemaphoreNS == red && (c->vehicle[num_car].startingposition == 'N' || c->vehicle[num_car].startingposition == 'S')){
         // NORTH
         if ((c->vehicle[num_car].yposition >= 180) && (c->vehicle[num_car].yposition < 190) && c->vehicle[num_car].startingposition == 'N') {
             c->vehicle[num_car].blocked = 1;
@@ -120,7 +117,7 @@ void checkSemaphore (struct cars_t *c, int num_car){
 
 
 // NEVER BLOCKING
-void checkCarsBlocked (int colorEO, int colorNS, struct cars_t *c){
+void checkCarsBlocked (int colorEO, int colorNS, struct condivisa *c){
 
     // Check of the color and if a vehicle is blocked or not
     if (colorEO == green) {
@@ -153,8 +150,8 @@ void *macchina (void *arg){
     num_car = (intptr_t) arg;
 
     for (;;){
-        carMove(&cars, num_car);
-        checkSemaphore(&cars, num_car);
+        carMove(&cond, num_car);
+        checkSemaphore(&cond, num_car);
         sleep(1);
     }
 }
@@ -174,8 +171,8 @@ void *semaforo (void *arg){
 
         EOSemaphore (color_EO[i]);
         NSSemaphore (color_NS[i]);
-        changeColor (color_EO[i], color_NS[i], &cars);
-        checkCarsBlocked (color_EO[i], color_NS[i], &cars);
+        changeColor (color_EO[i], color_NS[i], &cond);
+        checkCarsBlocked (color_EO[i], color_NS[i], &cond);
 
         i++;
         sleep(15);
@@ -188,7 +185,7 @@ void * grafico (void * arg){
         sleep(1);
         drawGraphics();
         drawLines();
-        drawCars(&cars);
+        drawCars(&cond);
     }
 }
 
@@ -207,7 +204,7 @@ int main(){
     srand(time(NULL));
 
     pthread_attr_init(&attr);
-    initCars(&cars);
+    initStruct(&cond);
 
     // N thread cars
     for (int i = 0; i < N; i++){

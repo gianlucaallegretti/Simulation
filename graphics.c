@@ -19,16 +19,16 @@ void drawGraphics(){
 }
 
 // To draw cars
-void drawCars(struct cars_t *c){
+void drawCars(struct condivisa *c){
     for (int i = 0; i < N; i++){
     // Drawing car in new position
     circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
 
     // Re-drawing semaphores
     if (c->vehicle[i].startingposition == 'E' || c->vehicle[i].startingposition == 'W')
-        EOSemaphore(c->vehicle[i].color);
+        EOSemaphore(c->colorSemaphoreEO);
     else
-        NSSemaphore(c->vehicle[i].color);
+        NSSemaphore(c->colorSemaphoreNS);
     }
 }
 
