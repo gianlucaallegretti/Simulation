@@ -16,3 +16,6 @@
 // For the color of the semaphores
 void EOSemaphore(int color);
 void NSSemaphore(int color);
+
+// To draw lines in the graphic
+void drawLines();

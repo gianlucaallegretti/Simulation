@@ -53,6 +53,42 @@ void initStruct (struct condivisa *c) {
 // NEVER BLOCKING
 void carMove(struct condivisa *c, int num_car){
    
+   // To change if it's coming from south
+    if (c->vehicle[num_car].startingposition == 'S' && c->vehicle[num_car].xposition == 385 && c->vehicle[num_car].yposition == 390){
+        c->vehicle[num_car].startingposition = 'E';
+    }
+
+    if (c->vehicle[num_car].startingposition == 'S' && c->vehicle[num_car].xposition == 310 && c->vehicle[num_car].yposition == 290){
+        c->vehicle[num_car].startingposition = 'W';
+    }
+
+    // To change if it's coming from north
+    if (c->vehicle[num_car].startingposition == 'N' && c->vehicle[num_car].xposition == 210 && c->vehicle[num_car].yposition == 210){
+        c->vehicle[num_car].startingposition = 'W';
+    }
+
+    if (c->vehicle[num_car].startingposition == 'N' && c->vehicle[num_car].xposition == 285 && c->vehicle[num_car].yposition == 310){
+        c->vehicle[num_car].startingposition = 'E';
+    }
+
+    // To change if it's coming from west
+    if (c->vehicle[num_car].startingposition == 'W' && c->vehicle[num_car].xposition == 390 && c->vehicle[num_car].yposition == 210){
+        c->vehicle[num_car].startingposition = 'S';
+    }
+
+    if (c->vehicle[num_car].startingposition == 'W' && c->vehicle[num_car].xposition == 290 && c->vehicle[num_car].yposition == 285){
+        c->vehicle[num_car].startingposition = 'N';
+    }
+
+    // To change if it's coming from east
+    if (c->vehicle[num_car].startingposition == 'E' && c->vehicle[num_car].xposition == 310 && c->vehicle[num_car].yposition == 310){
+        c->vehicle[num_car].startingposition = 'S';
+    }
+
+    if (c->vehicle[num_car].startingposition == 'E' && c->vehicle[num_car].xposition == 210 && c->vehicle[num_car].yposition == 385){
+        c->vehicle[num_car].startingposition = 'N';
+    }
+
     // Setting new position of the car
     // WEST
     if (c->vehicle[num_car].startingposition == 'W'){
