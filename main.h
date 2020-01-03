@@ -16,6 +16,7 @@ struct privata {
     int xposition, yposition, blocked;
     char startingposition;
     bool turn;
+    bool finished;
 } ;
 
 struct condivisa {

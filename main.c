@@ -4,13 +4,8 @@
 void initStruct (struct condivisa *c) {
 
     sem_init (&c->mutex, 0, 1);
+    c->num_macchine = 0;
 
-}
-
-
-void carStart (struct condivisa *c){
-
-    if (c->num_macchine < N) {
     for (int i = 0; i < N; i++){
         // To initialize the car in a random lane
         int firstLanes[4] = {210, 235, 260, 285};
@@ -49,7 +44,58 @@ void carStart (struct condivisa *c){
         // No vehicles blocked at the beginning
         c->vehicle[i].blocked = 0;
         c->vehicle[i].turn = false;
+        c->vehicle[i].finished = false;
 
+       
+        // Drawing the car like a circlefill
+        circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
+        c->num_macchine++;
+    }
+}
+
+
+void carStart (struct condivisa *c){
+
+    if (c->num_macchine == 0) {
+    for (int i = 0; i < N; i++){
+        // To initialize the car in a random lane
+        int firstLanes[4] = {210, 235, 260, 285};
+        int secondLanes[4] = {310, 335, 360, 385};
+        int index = rand() % 4;
+
+       
+        // Initializing N/4 cars for each direction
+        if (i < N/4){
+       
+            c->vehicle[i].startingposition = 'N';
+            c->vehicle[i].xposition = firstLanes[index]; // 210
+            c->vehicle[i].yposition = 10;
+        }
+        else if (i < N/2){
+
+            c->vehicle[i].startingposition = 'E';
+            c->vehicle[i].xposition = 590;
+            c->vehicle[i].yposition =firstLanes[index]; // 210
+        }
+        else if (i < (N/4)*3){
+
+            c->vehicle[i].startingposition = 'W';
+            c->vehicle[i].xposition = 10;
+            c->vehicle[i].yposition = secondLanes[index]; // 310
+        }
+        else if (i < N){
+
+            c->vehicle[i].startingposition = 'S';
+            c->vehicle[i].xposition = secondLanes[index]; // 310
+            c->vehicle[i].yposition = 590;
+        }
+
+        // All semaphores initialized to 0
+        sem_init (&c->vehicle[i].macchina, 0, 0);
+        // No vehicles blocked at the beginning
+        c->vehicle[i].blocked = 0;
+        c->vehicle[i].turn = false;
+        c->vehicle[i].finished = false;
        
         // Drawing the car like a circlefill
         circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
@@ -195,15 +241,28 @@ void checkCarsBlocked (int colorEO, int colorNS, struct condivisa *c){
 
 void carFinish (struct condivisa *c, int num_car){
     
-    if (c->vehicle[num_car].xposition > 590)
-        c->num_macchine--;
+    if (c->vehicle[num_car].finished == false) {
+        if (c->vehicle[num_car].xposition > 590){
+            c->vehicle[num_car].finished = true;
+            c->num_macchine--;
+        }
     
-    if (c->vehicle[num_car].xposition < 10){
-        c->num_macchine--;
+        if (c->vehicle[num_car].xposition < 10){
+            c->vehicle[num_car].finished = true;
+            c->num_macchine--;
+        }
     
-    if (c->vehicle[num_car].yposition > 590)
-        c->num_macchine--;
+        if (c->vehicle[num_car].yposition > 590){
+            c->vehicle[num_car].finished = true;
+            c->num_macchine--;
+        }
+
+        if (c->vehicle[num_car].yposition < 10){
+            c->vehicle[num_car].finished = true;
+            c->num_macchine--;
+        }
     }
+
 }
 
 
@@ -217,11 +276,11 @@ void *macchina (void *arg){
     num_car = (intptr_t) arg;
 
     for (;;){
+        usleep(500000);
         carStart(&cond);
         carMove(&cond, num_car);
         checkSemaphore(&cond, num_car);
         carFinish(&cond, num_car);
-        usleep(500000);
     }
 }
 
