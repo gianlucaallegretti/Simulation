@@ -22,6 +22,7 @@ void drawGraphics(){
 void drawCars(struct condivisa *c){
     for (int i = 0; i < N; i++){
     // Drawing car in new position
+    
     circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
 
     // Re-drawing semaphores

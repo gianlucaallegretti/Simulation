@@ -5,6 +5,12 @@ void initStruct (struct condivisa *c) {
 
     sem_init (&c->mutex, 0, 1);
 
+}
+
+
+void carStart (struct condivisa *c){
+
+    if (c->num_macchine < N) {
     for (int i = 0; i < N; i++){
         // To initialize the car in a random lane
         int firstLanes[4] = {210, 235, 260, 285};
@@ -21,13 +27,13 @@ void initStruct (struct condivisa *c) {
         }
         else if (i < N/2){
 
-            c->vehicle[i].startingposition = 'W';
+            c->vehicle[i].startingposition = 'E';
             c->vehicle[i].xposition = 590;
             c->vehicle[i].yposition =firstLanes[index]; // 210
         }
         else if (i < (N/4)*3){
 
-            c->vehicle[i].startingposition = 'E';
+            c->vehicle[i].startingposition = 'W';
             c->vehicle[i].xposition = 10;
             c->vehicle[i].yposition = secondLanes[index]; // 310
         }
@@ -42,61 +48,73 @@ void initStruct (struct condivisa *c) {
         sem_init (&c->vehicle[i].macchina, 0, 0);
         // No vehicles blocked at the beginning
         c->vehicle[i].blocked = 0;
+        c->vehicle[i].turn = false;
 
        
         // Drawing the car like a circlefill
         circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, 5, 14);
+        c->num_macchine++;
+    }
     }
 }
-
 
 // NEVER BLOCKING
 void carMove(struct condivisa *c, int num_car){
    
+   if (c->vehicle[num_car].turn == false){
    // To change if it's coming from south
     if (c->vehicle[num_car].startingposition == 'S' && c->vehicle[num_car].xposition == 385 && c->vehicle[num_car].yposition == 390){
-        c->vehicle[num_car].startingposition = 'E';
+        c->vehicle[num_car].startingposition = 'W';
+        c->vehicle[num_car].turn = true;
     }
 
     if (c->vehicle[num_car].startingposition == 'S' && c->vehicle[num_car].xposition == 310 && c->vehicle[num_car].yposition == 290){
-        c->vehicle[num_car].startingposition = 'W';
+        c->vehicle[num_car].startingposition = 'E';
+        c->vehicle[num_car].turn = true;
     }
 
     // To change if it's coming from north
     if (c->vehicle[num_car].startingposition == 'N' && c->vehicle[num_car].xposition == 210 && c->vehicle[num_car].yposition == 210){
-        c->vehicle[num_car].startingposition = 'W';
+        c->vehicle[num_car].startingposition = 'E';
+        c->vehicle[num_car].turn = true;
     }
 
     if (c->vehicle[num_car].startingposition == 'N' && c->vehicle[num_car].xposition == 285 && c->vehicle[num_car].yposition == 310){
-        c->vehicle[num_car].startingposition = 'E';
-    }
-
-    // To change if it's coming from west
-    if (c->vehicle[num_car].startingposition == 'W' && c->vehicle[num_car].xposition == 390 && c->vehicle[num_car].yposition == 210){
-        c->vehicle[num_car].startingposition = 'S';
-    }
-
-    if (c->vehicle[num_car].startingposition == 'W' && c->vehicle[num_car].xposition == 290 && c->vehicle[num_car].yposition == 285){
-        c->vehicle[num_car].startingposition = 'N';
+        c->vehicle[num_car].startingposition = 'W';
+        c->vehicle[num_car].turn = true;
     }
 
     // To change if it's coming from east
-    if (c->vehicle[num_car].startingposition == 'E' && c->vehicle[num_car].xposition == 310 && c->vehicle[num_car].yposition == 310){
+    if (c->vehicle[num_car].startingposition == 'E' && c->vehicle[num_car].xposition == 390 && c->vehicle[num_car].yposition == 210){
         c->vehicle[num_car].startingposition = 'S';
+        c->vehicle[num_car].turn = true;
     }
 
-    if (c->vehicle[num_car].startingposition == 'E' && c->vehicle[num_car].xposition == 210 && c->vehicle[num_car].yposition == 385){
+    if (c->vehicle[num_car].startingposition == 'E' && c->vehicle[num_car].xposition == 290 && c->vehicle[num_car].yposition == 285){
         c->vehicle[num_car].startingposition = 'N';
+        c->vehicle[num_car].turn = true;
     }
+
+    // To change if it's coming from west
+    if (c->vehicle[num_car].startingposition == 'W' && c->vehicle[num_car].xposition == 310 && c->vehicle[num_car].yposition == 310){
+        c->vehicle[num_car].startingposition = 'S';
+        c->vehicle[num_car].turn = true;
+    }
+
+    if (c->vehicle[num_car].startingposition == 'W' && c->vehicle[num_car].xposition == 210 && c->vehicle[num_car].yposition == 385){
+        c->vehicle[num_car].startingposition = 'N';
+        c->vehicle[num_car].turn = true;
+    }
+   }
 
     // Setting new position of the car
     // WEST
     if (c->vehicle[num_car].startingposition == 'W'){
-        c->vehicle[num_car].xposition -= 10;
+        c->vehicle[num_car].xposition += 10;
     }
     // EAST
     else if (c->vehicle[num_car].startingposition == 'E'){
-        c->vehicle[num_car].xposition += 10;
+        c->vehicle[num_car].xposition -= 10;
     }
     // NORTH
     else if (c->vehicle[num_car].startingposition == 'N'){
@@ -124,13 +142,13 @@ void checkSemaphore (struct condivisa *c, int num_car){
     // It will block the car if it's red and near the semaphore
     if (c->colorSemaphoreEO == red && (c->vehicle[num_car].startingposition == 'W' || c->vehicle[num_car].startingposition == 'E')){
         // WEST
-        if ((c->vehicle[num_car].xposition <= 420) && (c->vehicle[num_car].xposition > 410) && c->vehicle[num_car].startingposition == 'W') {
+        if ((c->vehicle[num_car].xposition <= 420) && (c->vehicle[num_car].xposition > 410) && c->vehicle[num_car].startingposition == 'E') {
             c->vehicle[num_car].blocked = 1;
             sem_wait(&c->vehicle[num_car].macchina);
         }
 
         // EAST
-        if ((c->vehicle[num_car].xposition >= 180) && (c->vehicle[num_car].xposition < 190) && c->vehicle[num_car].startingposition == 'E') {
+        if ((c->vehicle[num_car].xposition >= 180) && (c->vehicle[num_car].xposition < 190) && c->vehicle[num_car].startingposition == 'W') {
             c->vehicle[num_car].blocked = 1;
             sem_wait(&c->vehicle[num_car].macchina);
         }
@@ -175,6 +193,19 @@ void checkCarsBlocked (int colorEO, int colorNS, struct condivisa *c){
 }
 
 
+void carFinish (struct condivisa *c, int num_car){
+    
+    if (c->vehicle[num_car].xposition > 590)
+        c->num_macchine--;
+    
+    if (c->vehicle[num_car].xposition < 10){
+        c->num_macchine--;
+    
+    if (c->vehicle[num_car].yposition > 590)
+        c->num_macchine--;
+    }
+}
+
 
 
 
@@ -186,9 +217,11 @@ void *macchina (void *arg){
     num_car = (intptr_t) arg;
 
     for (;;){
+        carStart(&cond);
         carMove(&cond, num_car);
         checkSemaphore(&cond, num_car);
-        sleep(1);
+        carFinish(&cond, num_car);
+        usleep(500000);
     }
 }
 

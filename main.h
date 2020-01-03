@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 // To define the number of vehicles
 #define N 12
@@ -14,12 +15,13 @@ struct privata {
     sem_t macchina;
     int xposition, yposition, blocked;
     char startingposition;
+    bool turn;
 } ;
 
 struct condivisa {
     sem_t mutex;
     struct privata vehicle[N];
-    int colorSemaphoreEO, colorSemaphoreNS;
+    int colorSemaphoreEO, colorSemaphoreNS, num_macchine;
 } cond;
 
 // To init cars
