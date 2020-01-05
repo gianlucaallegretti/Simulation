@@ -7,7 +7,7 @@
 #include <allegro.h>
 
 // To define the number of vehicles
-#define N 12
+#define N 16
 
 // To define the dimension of the cars
 #define dimension_car 5

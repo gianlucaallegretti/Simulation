@@ -20,27 +20,28 @@ void carStart (struct condivisa *c){
 
             // Initializing N/4 cars for each direction
             if (i < N/4){
-       
+                
                 c->vehicle[i].startingposition = 'N';
-                c->vehicle[i].xposition = firstLanes[index]; // 210
+                c->vehicle[i].xposition = firstLanes[i];
                 c->vehicle[i].yposition = 0;
             }
             else if (i < N/2){
 
                 c->vehicle[i].startingposition = 'E';
                 c->vehicle[i].xposition = XWIN;
-                c->vehicle[i].yposition =firstLanes[index]; // 210
+                c->vehicle[i].yposition =firstLanes[i -N/4];
+                
             }
             else if (i < (N/4)*3){
 
                 c->vehicle[i].startingposition = 'W';
                 c->vehicle[i].xposition = 0;
-                c->vehicle[i].yposition = secondLanes[index]; // 310
+                c->vehicle[i].yposition = secondLanes[i - N/2];
             }
             else if (i < N){
-
+                
                 c->vehicle[i].startingposition = 'S';
-                c->vehicle[i].xposition = secondLanes[index]; // 310
+                c->vehicle[i].xposition = secondLanes[i - (N/4)*3];
                 c->vehicle[i].yposition = YWIN;
             }
 
