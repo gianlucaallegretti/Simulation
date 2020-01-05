@@ -2,6 +2,7 @@
 
 // To init allegro
 void initGraphics(){
+
     allegro_init();
     set_color_depth(8);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, XWIN, YWIN, 0, 0);
@@ -10,6 +11,7 @@ void initGraphics(){
 
 // To draw graphics
 void drawGraphics(){
+
     clear_to_color(screen, 2);
     rectfill(screen, XWIN/2 - 100, 0, (XWIN/2)+ 100, YWIN-1, 8);
     rectfill(screen, 0, (YWIN/2) - 100, XWIN-1, (YWIN/2) + 100, 8);
@@ -41,8 +43,10 @@ void changeColor (int colorEO, int colorNS, struct condivisa *c){
     sem_post(&c->mutex);
 }
 
+
 // To draw road lines
 void drawLines(){
+
     // WEST POSITION
     int i = 0;
     for (i = 0; i <= 160; i=i+10){
@@ -58,7 +62,6 @@ void drawLines(){
     // Line to separate 2 different way to go (right-left/left-right)
     rectfill(screen, 0, YWIN/2 -1, XWIN/2 - 100, YWIN/2 + 1, white);
 
-    
     // Other side
     for(i = 0; i <= 160; i+=10){
         rectfill(screen, i, 324, i+5, 326, white);
@@ -99,7 +102,6 @@ void drawLines(){
     // Line to separate 2 different way to go (right-left/left-right)
     rectfill(screen, (XWIN/3)*2, YWIN/2 - 1, XWIN, YWIN/2 +1, white);
 
-    
     // Other side
     for(i = 440; i <= 600; i+=10){
         rectfill(screen, i, 324, i+5, 326, white);
@@ -125,6 +127,7 @@ void drawLines(){
     rectfill(screen, XWIN/2 - 125, 384, XWIN/2 - 125, 386, white);
     triangle(screen, XWIN/2 - 120, 386, XWIN/2 - 130, 386, XWIN/2 - 125, 395, white);
 
+
     // NORTH POSITION
     for (i = 0; i <= 160; i=i+10){
         rectfill(screen, 224, i, 226, i+5, white);
@@ -139,7 +142,6 @@ void drawLines(){
     // Line to separate 2 different way to go (right-left/left-right)
     rectfill(screen, XWIN/2 - 1, 0, XWIN/2 + 1, YWIN/2 - 100, white);
 
-    
     // Other side
     for(i = 0; i <= 160; i+=10){
         rectfill(screen, 324, i, 326, i+5, white);
@@ -156,7 +158,6 @@ void drawLines(){
     triangle(screen, 233, YWIN/2 - 130, 242, YWIN/2 - 130, 237.5, YWIN/2 - 120, white);
     rectfill(screen, 260, YWIN/2 - 140, 265, YWIN/2 - 130, white);
     triangle(screen, 258, YWIN/2 - 130, 267, YWIN/2 - 130, 262.5, YWIN/2 - 120, white);
-
     
     rectfill(screen, 218, YWIN/2 - 140, (XWIN/3) + 20, YWIN/2 - 125, white);
     rectfill(screen, 216, YWIN/2 - 125, 218, YWIN/2 - 125, white);
@@ -180,8 +181,7 @@ void drawLines(){
     rectfill(screen, 274, (YWIN/3)*2, 276, (YWIN/3)*2 + 40, white);
     // Line to separate 2 different way to go (right-left/left-right)
     rectfill(screen, XWIN/2 - 1, (YWIN/3)*2, XWIN/2 + 1, YWIN, white);
-
-    
+  
     // Other side
     for(i = 440; i <= 600; i+=10){
         rectfill(screen, 324, i, 326, i+5, white);
@@ -206,8 +206,8 @@ void drawLines(){
     rectfill(screen, 384, YWIN/2 + 140, 386, YWIN/2 + 125, white);
     rectfill(screen, 386, YWIN/2 + 125, 388, YWIN/2 + 125, white);
     triangle(screen, 388, YWIN/2 + 120, 388, YWIN/2 + 130, 397, YWIN/2 + 125, white);
-
 }
+
 
 // passing the color to east-west semaphore
 void EOSemaphore(int color){
@@ -221,6 +221,7 @@ void EOSemaphore(int color){
     rectfill(screen, (XWIN/3) - 10, 355, (XWIN/3), 370, color);
     rectfill(screen, (XWIN/3) - 10, 380, (XWIN/3), 395, color);
 }
+
 
 // passing the color to north-south semaphore
 void NSSemaphore(int color){

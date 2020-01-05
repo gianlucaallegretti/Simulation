@@ -18,10 +18,8 @@ void carStart (struct condivisa *c){
             // To initialize the car in a random lane
             int index = rand() % 4;
 
-       
             // Initializing N/4 cars for each direction
             if (i < N/4){
-
        
                 c->vehicle[i].startingposition = 'N';
                 c->vehicle[i].xposition = firstLanes[index]; // 210
@@ -52,8 +50,7 @@ void carStart (struct condivisa *c){
             c->vehicle[i].blocked = 0;
             c->vehicle[i].turn = false;
             c->vehicle[i].finished = false;
-
-       
+    
             // Drawing the car like a circlefill
             circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, dimension_car, yellow);
             c->num_macchine++;
@@ -64,9 +61,9 @@ void carStart (struct condivisa *c){
 
 // NEVER BLOCKING
 void carTurn (struct condivisa *c, int num_car){
-
     
     if (c->vehicle[num_car].turn == false){
+
         // To change if it's coming from south
         if (c->vehicle[num_car].startingposition == 'S' && c->vehicle[num_car].xposition == 385 && c->vehicle[num_car].yposition == 390){
             c->vehicle[num_car].startingposition = 'W';
@@ -117,24 +114,22 @@ void carTurn (struct condivisa *c, int num_car){
 // NEVER BLOCKING
 void carMove(struct condivisa *c, int num_car){
 
-   
     // Setting new position of the car
     // WEST
-    if (c->vehicle[num_car].startingposition == 'W'){
+    if (c->vehicle[num_car].startingposition == 'W')
         c->vehicle[num_car].xposition += 10;
-    }
+
     // EAST
-    else if (c->vehicle[num_car].startingposition == 'E'){
+    else if (c->vehicle[num_car].startingposition == 'E')
         c->vehicle[num_car].xposition -= 10;
-    }
+
     // NORTH
-    else if (c->vehicle[num_car].startingposition == 'N'){
+    else if (c->vehicle[num_car].startingposition == 'N')
         c->vehicle[num_car].yposition += 10;
-    }
+
     // SOUTH
-    else if (c->vehicle[num_car].startingposition == 'S'){
+    else if (c->vehicle[num_car].startingposition == 'S')
         c->vehicle[num_car].yposition -= 10;
-    }
 }
 
 
@@ -145,6 +140,7 @@ void checkSemaphore (struct condivisa *c, int num_car){
     // It will block the car if it's red and near the semaphore
     if (c->colorSemaphoreEO == red && (c->vehicle[num_car].startingposition == 'W' || c->vehicle[num_car].startingposition == 'E')){
         sem_post(&c->mutex);
+
         // WEST
         if ((c->vehicle[num_car].xposition <= (XWIN/3)*2 + 20) && (c->vehicle[num_car].xposition > (XWIN/3)*2 + 10) && c->vehicle[num_car].startingposition == 'E') {
             c->vehicle[num_car].blocked = 1;
@@ -159,13 +155,11 @@ void checkSemaphore (struct condivisa *c, int num_car){
     }
     else
         sem_post(&c->mutex);
-
-    
+   
     sem_wait(&c->mutex);
-    if (c->colorSemaphoreNS == red && (c->vehicle[num_car].startingposition == 'N' || c->vehicle[num_car].startingposition == 'S')){
-
-        
+    if (c->colorSemaphoreNS == red && (c->vehicle[num_car].startingposition == 'N' || c->vehicle[num_car].startingposition == 'S')){  
         sem_post(&c->mutex);
+
         // NORTH
         if ((c->vehicle[num_car].yposition >= YWIN/3 - 20) && (c->vehicle[num_car].yposition < YWIN/3 - 10) && c->vehicle[num_car].startingposition == 'N') {
             c->vehicle[num_car].blocked = 1;
@@ -190,6 +184,7 @@ void checkCarsBlocked (struct condivisa *c){
     // Check of the color and if a vehicle is blocked or not
     if (c->colorSemaphoreEO == green) {
         sem_post(&c->mutex);
+        
         for (int i = 0; i < N; i++){
             if (c->vehicle[i].blocked == 1 && (c->vehicle[i].startingposition == 'W' || c->vehicle[i].startingposition == 'E')) {
                 sem_post(&c->vehicle[i].macchina);
@@ -202,6 +197,7 @@ void checkCarsBlocked (struct condivisa *c){
     sem_wait(&c->mutex);
     if (c->colorSemaphoreNS == green){
         sem_post(&c->mutex);
+
         for (int i = 0; i < N; i++){
             if (c->vehicle[i].blocked == 1 && (c->vehicle[i].startingposition == 'N' || c->vehicle[i].startingposition == 'S')) {
                 sem_post(&c->vehicle[i].macchina);
@@ -215,21 +211,20 @@ void checkCarsBlocked (struct condivisa *c){
 
 // NEVER BLOCKING
 void carFinish (struct condivisa *c, int num_car){
-
-    
+  
+    // If it doesn't finish, it will check the position
     if (c->vehicle[num_car].finished == false) {
+
         if (c->vehicle[num_car].xposition > XWIN){
             c->vehicle[num_car].finished = true;
             c->num_macchine--;
         }
-
     
         if (c->vehicle[num_car].xposition < 0){
             c->vehicle[num_car].finished = true;
             c->num_macchine--;
         }
-
-    
+   
         if (c->vehicle[num_car].yposition > YWIN){
             c->vehicle[num_car].finished = true;
             c->num_macchine--;
@@ -241,6 +236,7 @@ void carFinish (struct condivisa *c, int num_car){
         }
     }
 }
+
 
 
 
@@ -265,14 +261,14 @@ void *macchina (void *arg){
     }
 }
 
+
 void *semaforo (void *arg){
 
     int i = 0;
     // Two array for the color of the semaphores
     int color_EO[2] = {green, red};
     int color_NS[2] = {red, green};
-
-   
+ 
     for (;;){
         if (i == 2){
             i = 0;
@@ -286,6 +282,7 @@ void *semaforo (void *arg){
         sleep(20);
     }
 }
+
 
 void * grafico (void * arg){
 
@@ -307,7 +304,6 @@ int main(){
     pthread_t car_thread, semaphore_thread, graphic_thread;
     pthread_attr_t attr;
 
-   
     int id = 0;
     srand(time(NULL));
 

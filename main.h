@@ -19,8 +19,7 @@ struct privata {
     sem_t macchina;
     int xposition, yposition, blocked;
     char startingposition;
-    bool turn;
-    bool finished;
+    bool turn, finished;
 } ;
 
 struct condivisa {
