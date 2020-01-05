@@ -1,5 +1,9 @@
 SIMULATION
-This is a simulation of a crossroad. Cars come from 4 different directions: North, South, West and East. There are 4 different semaphores, if the color is red cars will stop, if it's green they will pass.
+This is a simulation of a crossroad. Cars come from 4 different directions: North, South, West and East. There are 4 traffic lights, if the color is red cars will stop, if it's green they will pass. Color of traffic lights will change every 20 seconds.
+When cars are next to traffic lights, they can turn left, turn right or go ahead. It depends on the lane in which they are.
+When all the cars finished their travel, the program will start again with random lanes for each car.
+If you want to close the program you just have to click ESC button.
+
 
 
 
