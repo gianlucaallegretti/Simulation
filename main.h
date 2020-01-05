@@ -25,14 +25,14 @@ struct privata {
 struct condivisa {
     sem_t mutex;
     struct privata vehicle[N];
-    int colorSemaphoreEO, colorSemaphoreNS, num_macchine;
+    int colorSemaphoreEO, colorSemaphoreNS;
 } cond;
 
 // To init cars
 void initStruct (struct condivisa *c);
 
 // To start again cars
-void carStart (struct condivisa *c);
+void carStart (struct condivisa *c, int num_car);
 
 // To turn cars
 void carTurn (struct condivisa *c, int num_car);

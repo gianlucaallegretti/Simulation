@@ -5,61 +5,95 @@
 void initStruct (struct condivisa *c) {
 
     sem_init (&c->mutex, 0, 1);
-    c->num_macchine = 0;
+   
+    for (int i = 0; i < N; i++){
+
+        // Initializing N/4 cars for each direction
+        if (i < N/4){
+          
+            c->vehicle[i].startingposition = 'N';
+            c->vehicle[i].xposition = firstLanes[i];
+            c->vehicle[i].yposition = 0;
+        }
+        else if (i < N/2){
+
+            c->vehicle[i].startingposition = 'E';
+            c->vehicle[i].xposition = XWIN;
+            c->vehicle[i].yposition =firstLanes[i - N/4];              
+        }
+        else if (i < (N/4)*3){
+
+            c->vehicle[i].startingposition = 'W';
+            c->vehicle[i].xposition = 0;
+            c->vehicle[i].yposition = secondLanes[i - N/2];
+        }
+        else if (i < N){
+              
+            c->vehicle[i].startingposition = 'S';
+            c->vehicle[i].xposition = secondLanes[i - (N/4)*3];
+            c->vehicle[i].yposition = YWIN;
+        }
+
+        // All semaphores initialized to 0
+        sem_init (&c->vehicle[i].macchina, 0, 0);
+        // No vehicles blocked at the beginning
+        c->vehicle[i].blocked = 0;
+        c->vehicle[i].turn = false;
+        c->vehicle[i].finished = false;
+   
+        // Drawing the car like a circlefill
+        circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, dimension_car, yellow);
+    }
 }
 
 
 // NEVER BLOCKING
-void carStart (struct condivisa *c){
+void carStart (struct condivisa *c, int num_car){
 
-    if (c->num_macchine == 0) {
-        for (int i = 0; i < N; i++){
+    // If the vehicle finished, it will start again
+    if (c->vehicle[num_car].finished == true){
 
-            // Initializing N/4 cars for each direction
-            if (i < N/4){
-                
-                c->vehicle[i].startingposition = 'N';
-                c->vehicle[i].xposition = firstLanes[i];
-                c->vehicle[i].yposition = 0;
-            }
-            else if (i < N/2){
-
-                c->vehicle[i].startingposition = 'E';
-                c->vehicle[i].xposition = XWIN;
-                c->vehicle[i].yposition =firstLanes[i - N/4];
-                
-            }
-            else if (i < (N/4)*3){
-
-                c->vehicle[i].startingposition = 'W';
-                c->vehicle[i].xposition = 0;
-                c->vehicle[i].yposition = secondLanes[i - N/2];
-            }
-            else if (i < N){
-                
-                c->vehicle[i].startingposition = 'S';
-                c->vehicle[i].xposition = secondLanes[i - (N/4)*3];
-                c->vehicle[i].yposition = YWIN;
-            }
-
-            // All semaphores initialized to 0
-            sem_init (&c->vehicle[i].macchina, 0, 0);
-            // No vehicles blocked at the beginning
-            c->vehicle[i].blocked = 0;
-            c->vehicle[i].turn = false;
-            c->vehicle[i].finished = false;
-    
-            // Drawing the car like a circlefill
-            circlefill(screen, c->vehicle[i].xposition, c->vehicle[i].yposition, dimension_car, yellow);
-            c->num_macchine++;
+        if (num_car < N/4){
+             
+            c->vehicle[num_car].startingposition = 'N';
+            c->vehicle[num_car].xposition = firstLanes[num_car];
+            c->vehicle[num_car].yposition = 0;
         }
+        else if (num_car < N/2){
+
+            c->vehicle[num_car].startingposition = 'E';
+            c->vehicle[num_car].xposition = XWIN;
+            c->vehicle[num_car].yposition =firstLanes[num_car - N/4];                 
+        }
+        else if (num_car < (N/4)*3){
+            
+            c->vehicle[num_car].startingposition = 'W';
+            c->vehicle[num_car].xposition = 0;
+            c->vehicle[num_car].yposition = secondLanes[num_car - N/2];
+        }
+        else if (num_car < N){
+                  
+            c->vehicle[num_car].startingposition = 'S';
+            c->vehicle[num_car].xposition = secondLanes[num_car - (N/4)*3];
+            c->vehicle[num_car].yposition = YWIN;
+        }
+
+        // All semaphores initialized to 0
+        sem_init (&c->vehicle[num_car].macchina, 0, 0);
+        // No vehicles blocked at the beginning
+        c->vehicle[num_car].blocked = 0;
+        c->vehicle[num_car].turn = false;
+        c->vehicle[num_car].finished = false;
+        
+        // Drawing the car like a circlefill
+        circlefill(screen, c->vehicle[num_car].xposition, c->vehicle[num_car].yposition, dimension_car, yellow);
     }
 }
 
 
 // NEVER BLOCKING
 void carTurn (struct condivisa *c, int num_car){
-    
+   
     if (c->vehicle[num_car].turn == false){
 
         // To change if it's coming from south
@@ -153,9 +187,10 @@ void checkSemaphore (struct condivisa *c, int num_car){
     }
     else
         sem_post(&c->mutex);
+
    
     sem_wait(&c->mutex);
-    if (c->colorSemaphoreNS == red && (c->vehicle[num_car].startingposition == 'N' || c->vehicle[num_car].startingposition == 'S')){  
+    if (c->colorSemaphoreNS == red && (c->vehicle[num_car].startingposition == 'N' || c->vehicle[num_car].startingposition == 'S')){
         sem_post(&c->mutex);
 
         // NORTH
@@ -182,6 +217,7 @@ void checkCarsBlocked (struct condivisa *c){
     // Check of the color and if a vehicle is blocked or not
     if (c->colorSemaphoreEO == green) {
         sem_post(&c->mutex);
+
         
         for (int i = 0; i < N; i++){
             if (c->vehicle[i].blocked == 1 && (c->vehicle[i].startingposition == 'W' || c->vehicle[i].startingposition == 'E')) {
@@ -209,29 +245,21 @@ void checkCarsBlocked (struct condivisa *c){
 
 // NEVER BLOCKING
 void carFinish (struct condivisa *c, int num_car){
-  
+
     // If it doesn't finish, it will check the position
     if (c->vehicle[num_car].finished == false) {
 
-        if (c->vehicle[num_car].xposition > XWIN){
+        if (c->vehicle[num_car].xposition >= XWIN)
             c->vehicle[num_car].finished = true;
-            c->num_macchine--;
-        }
     
-        if (c->vehicle[num_car].xposition < 0){
+        if (c->vehicle[num_car].xposition <= 0)
             c->vehicle[num_car].finished = true;
-            c->num_macchine--;
-        }
    
-        if (c->vehicle[num_car].yposition > YWIN){
+        if (c->vehicle[num_car].yposition >= YWIN)
             c->vehicle[num_car].finished = true;
-            c->num_macchine--;
-        }
 
-        if (c->vehicle[num_car].yposition < 0){
+        if (c->vehicle[num_car].yposition <= 0)
             c->vehicle[num_car].finished = true;
-            c->num_macchine--;
-        }
     }
 }
 
@@ -250,7 +278,7 @@ void *macchina (void *arg){
 
     for (;;){
         usleep(500000);
-        carStart(&cond);
+        carStart(&cond, num_car);
         carTurn(&cond, num_car);
         carMove(&cond, num_car);
         checkSemaphore(&cond, num_car);
@@ -266,6 +294,7 @@ void *semaforo (void *arg){
     // Two array for the color of the semaphores
     int color_EO[2] = {green, red};
     int color_NS[2] = {red, green};
+
  
     for (;;){
         if (i == 2){

@@ -1,7 +1,7 @@
 SIMULATION
 This is a simulation of a crossroad. Cars come from 4 different directions: North, South, West and East. There are 4 traffic lights, if the color is red cars will stop, if it's green they will pass. Color of traffic lights will change every 20 seconds.
 When cars are next to traffic lights, they can turn left, turn right or go ahead. It depends on the lane in which they are.
-When all the cars finished their travel, the program will start again.
+When a car finished its travel, it will start again.
 If you want to close the program you just have to click ESC button.
 The number of cars is 16, there's one car for each lane.
 
