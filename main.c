@@ -15,9 +15,6 @@ void carStart (struct condivisa *c){
     if (c->num_macchine == 0) {
         for (int i = 0; i < N; i++){
 
-            // To initialize the car in a random lane
-            int index = rand() % 4;
-
             // Initializing N/4 cars for each direction
             if (i < N/4){
                 
@@ -29,7 +26,7 @@ void carStart (struct condivisa *c){
 
                 c->vehicle[i].startingposition = 'E';
                 c->vehicle[i].xposition = XWIN;
-                c->vehicle[i].yposition =firstLanes[i -N/4];
+                c->vehicle[i].yposition =firstLanes[i - N/4];
                 
             }
             else if (i < (N/4)*3){
