@@ -78,9 +78,7 @@ void carStart (struct condivisa *c, int num_car){
             c->vehicle[num_car].yposition = YWIN;
         }
 
-        // All semaphores initialized to 0
         sem_init (&c->vehicle[num_car].macchina, 0, 0);
-        // No vehicles blocked at the beginning
         c->vehicle[num_car].blocked = 0;
         c->vehicle[num_car].turn = false;
         c->vehicle[num_car].finished = false;
