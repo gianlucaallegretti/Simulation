@@ -215,8 +215,7 @@ void checkCarsBlocked (struct condivisa *c){
     // Check of the color and if a vehicle is blocked or not
     if (c->colorSemaphoreEO == green) {
         sem_post(&c->mutex);
-
-        
+   
         for (int i = 0; i < N; i++){
             if (c->vehicle[i].blocked == 1 && (c->vehicle[i].startingposition == 'W' || c->vehicle[i].startingposition == 'E')) {
                 sem_post(&c->vehicle[i].macchina);

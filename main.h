@@ -48,8 +48,3 @@ void checkCarsBlocked(struct condivisa *c);
 
 // To check if cars finished
 void carFinish (struct condivisa *c, int num_car);
-
-// To change color of the semaphore
-void changeColor (int colorEO, int colorNS, struct condivisa *c);
-
-
