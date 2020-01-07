@@ -1,4 +1,4 @@
-CROSSROAD SIMULATION
+## CROSSROAD SIMULATION
 This is a simulation of a crossroad. Cars come from 4 different directions: North, South, West and East. There are 4 traffic lights, if the color is red cars will stop, if it's green they will pass. Color of traffic lights will change every 20 seconds.
 When cars are next to traffic lights, they can turn left, turn right or go ahead. It depends on the lane in which they are.
 When a car finished its travel, it will start again.
@@ -6,37 +6,37 @@ If you want to close the program you just have to click ESC button.
 The number of cars is 16, there's one car for each lane.
 
 
-DEPENDENCIES
+## DEPENDENCIES
 The project is based on Allegro 4.4 and ptask. 
 To install Allegro 4 under Linux, type this on the terminal: 
 sudo apt-get install liballegro4.4 liballegro4.4-dev
 
 
-HOW TO START
+## HOW TO START
 gcc main.c -o main -lpthread `allegro-config --libs`
 ./main
 
 
-TASK
+## TASK
 In this simulation there are different tasks:
 - N tasks for cars. Each car on the street is a task
 - Graphic task. It's used to manage interaction on the screen
 - Traffic light task. One task to manage traffic lights. East-West traffic lights are coordinated and North-South are coordinated.
 
 
-INTERACTIONS
+## INTERACTIONS
 Task interacts through a shared struct. In the struct there's a private struct which is used by task cars. It helds all the features that are useful for the movement of a car. 
 In the shared struct there are also two variables for color of traffic lights which are accessed by car tasks on reading, by traffic light task on writing. This will be protect by mutex, to guarantee mutual esclusion between different tasks. Traffic light task will change the color every 20 seconds, changing the value on the shared struct. Car tasks will check the color of the traffic light, accessing on reading the variables in the shared struct. 
 
 
 
-ORGANIZATION OF THE PROJECT
+## ORGANIZATION OF THE PROJECT
 - main.c: there are all the functions that are committed by the cars for the movement (with main.h file too)
 - graphics.c: there all the functions that are used for graphics, included sempahores (with graphic.c file too)
 
 
-ARCHITECTURE
-![alt text](architettura.png)
+## ARCHITECTURE
+![alt text](https://github.com/gianlucaallegretti/Simulation/blob/master/architettura.png)
 
 
 
